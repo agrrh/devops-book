@@ -1,0 +1,21 @@
+---
+
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - docker build . -t devops-book
+
+  run:
+    deps:
+      - clean
+      - build
+    cmds:
+      - docker ps | grep devops-book || docker run --name devops-book --detach --publish 8080:80 devops-book
+      - xdg-open http://127.0.0.1:8080
+      - sleep 5
+
+  clean:
+    cmds:
+      - docker rm -f devops-book

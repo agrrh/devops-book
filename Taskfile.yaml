@@ -5,17 +5,22 @@ version: '3'
 tasks:
   build:
     cmds:
-      - docker build . -t devops-book
+      - docker build . -t devops-book -f dev.Dockerfile
 
   run:
     deps:
       - clean
       - build
     cmds:
-      - docker ps | grep devops-book || docker run --name devops-book --detach --publish 8080:80 devops-book
+      - docker run --name devops-book --detach --volume $(pwd):/work --publish 8080:8080 devops-book
       - xdg-open http://127.0.0.1:8080
-      - sleep 5
+
+  stop:
+    cmds:
+      - docker stop devops-book || true
 
   clean:
+    deps:
+      - stop
     cmds:
-      - docker rm -f devops-book
+      - docker rm devops-book || true
